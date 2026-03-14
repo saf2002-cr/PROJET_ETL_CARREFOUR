@@ -43,7 +43,7 @@
 | **Status** | PRODUCTION READY |
 
 **ETL Flow**:
-[Sample Data](etl/dim_product_sample_data.png)
+![Sample Data](etl/dim_product_sample_data.png)
 *Figure 2: Sample Data from dim_product Table - Validated Product Records*
 
 
