@@ -43,3 +43,26 @@
 | **Status** | PRODUCTION READY |
 
 **ETL Flow**:
+[Sample Data](docs/dim_product_sample_data.png)
+*Figure 2: Sample Data from dim_product Table - Validated Product Records*
+
+
+### 2️) load_dim_customer.ktr
+*Customer Dimension Loading Pipeline with MD5 Hash Generation*
+
+![ETL Flow](docs/etl_dim_customer_flow.png)
+*Figure 3: Pentaho ETL Transformation Flow for Customer Dimension*
+
+| Metric | Value |
+|--------|-------|
+| **Source** | Carrefour CSV (64,006 rows) |
+| **Target** | `dim_customer` (MySQL) |
+| **Key Fields** | `gender`, `age`, `city`, `customer_hash` |
+| **Transformations** | Field filtering, deduplication on customer profile |
+| **Unique ID Strategy** | MD5 hash: `MD5(CONCAT(gender, '_', age, '_', city))` |
+| **Data Quality** | Duplicate customer removal via Sort Rows + Unique Rows |
+| **Status** | PRODUCTION READY |
+
+**ETL Flow**:
+![Sample Data](docs/dim_customer_sample_data.png)
+*Figure 4: Sample Data from dim_customer Table - Customer Records with MD5 Hashes*
