@@ -1,5 +1,6 @@
 # PROJET_ETL_CARREFOUR
-- This project demonstrates a complete Data Engineering and Analytics pipeline. The goal is to transform raw, unorganized online sales data from Carrefour into a structured Data Warehouse to extract actionable business insights.
+- This project builds a complete Business Intelligence solution for analyzing Carrefour's e-commerce performance. It extracts raw transaction data from CSV files, transforms and cleans it through Pentaho ETL pipelines, loads structured data into a MySQL Star Schema Data Warehouse, and enables interactive analytics through Python dashboards.
+
 
 # Architecture & Tools
 - Source: Raw CSV datasets containing transaction history.
@@ -22,3 +23,23 @@
      Top-performing product categories.
 
      Customer behavior patterns.
+
+## ETL Pipelines
+
+### 1️⃣ load_dim_product.ktr
+*Product Dimension Loading Pipeline*
+
+![ETL Flow](docs/etl_dim_product_flow.png)
+*Figure 1: Pentaho ETL Transformation Flow for Product Dimension*
+
+| Metric | Value |
+|--------|-------|
+| **Source** | Carrefour CSV (64,006 rows) |
+| **Target** | `dim_product` (MySQL) |
+| **Key Fields** | `sku`, `item_id`, `category`, `unit_price` |
+| **Transformations** | Field filtering, type conversion (Integer→String), price→unit_price mapping |
+| **Data Quality** | Duplicate SKU removal via Sort Rows + Unique Rows |
+| **Performance** | Batch inserts (1000 rows/commit) |
+| **Status** | ✅ PRODUCTION READY |
+
+**ETL Flow**:
