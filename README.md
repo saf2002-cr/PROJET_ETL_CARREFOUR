@@ -29,7 +29,7 @@
 ### 1) load_dim_product.ktr
 *Product Dimension Loading Pipeline*
 
-![ETL Flow](docs/etl_dim_product_flow.png)
+![ETL Flow](etl/etl_dim_product_flow.png)
 *Figure 1: Pentaho ETL Transformation Flow for Product Dimension*
 
 | Metric | Value |
@@ -43,14 +43,14 @@
 | **Status** | PRODUCTION READY |
 
 **ETL Flow**:
-[Sample Data](docs/dim_product_sample_data.png)
+[Sample Data](etl/dim_product_sample_data.png)
 *Figure 2: Sample Data from dim_product Table - Validated Product Records*
 
 
 ### 2️) load_dim_customer.ktr
 *Customer Dimension Loading Pipeline with MD5 Hash Generation*
 
-![ETL Flow](docs/etl_dim_customer_flow.png)
+![ETL Flow](etl/etl_dim_customer_flow.png)
 *Figure 3: Pentaho ETL Transformation Flow for Customer Dimension*
 
 | Metric | Value |
@@ -64,5 +64,5 @@
 | **Status** | PRODUCTION READY |
 
 **ETL Flow**:
-![Sample Data](docs/dim_customer_sample_data.png)
+![Sample Data](etl/dim_customer_sample_data.png)
 *Figure 4: Sample Data from dim_customer Table - Customer Records with MD5 Hashes*
