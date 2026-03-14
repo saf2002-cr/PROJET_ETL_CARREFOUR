@@ -26,7 +26,7 @@
 
 ## ETL Pipelines
 
-### 1️⃣ load_dim_product.ktr
+### 1) load_dim_product.ktr
 *Product Dimension Loading Pipeline*
 
 ![ETL Flow](docs/etl_dim_product_flow.png)
@@ -40,6 +40,6 @@
 | **Transformations** | Field filtering, type conversion (Integer→String), price→unit_price mapping |
 | **Data Quality** | Duplicate SKU removal via Sort Rows + Unique Rows |
 | **Performance** | Batch inserts (1000 rows/commit) |
-| **Status** | ✅ PRODUCTION READY |
+| **Status** | PRODUCTION READY |
 
 **ETL Flow**:
