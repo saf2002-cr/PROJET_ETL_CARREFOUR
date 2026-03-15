@@ -85,5 +85,5 @@
 
 **ETL Flow**:
 
-![Sample Data](docs/fact_sales_sample_data.png)
+![Sample Data](etl/fact_sales_sample_data.png)
 *Figure 6: Sample Data from fact_sales Table - Sales Transactions with Dimension Joins*
