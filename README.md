@@ -66,3 +66,24 @@
 **ETL Flow**:
 ![Sample Data](etl/dim_customer_sample_data.png)
 *Figure 4: Sample Data from dim_customer Table - Customer Records with MD5 Hashes*
+
+### 3️) load_fact_sales.ktr
+*Fact Sales Loading Pipeline*
+
+![ETL Flow](etl/etl_fact_sales_flow.png)
+*Figure 5: Pentaho ETL Transformation Flow for Fact Sales*
+
+| Metric | Value |
+|--------|-------|
+| **Source** | Carrefour CSV (64,006 rows) |
+| **Target** | `fact_sales` (MySQL) |
+| **Lookups** | 5 dimensions (product, customer, date, payment, status) |
+| **Metrics** | line_total, net_sales (calculated) |
+| **Data Quality** | FK constraint handling, NULL filtering |
+| **Performance** | Cache enabled on all lookups |
+| **Status** | PRODUCTION READY |
+
+**ETL Flow**:
+
+![Sample Data](docs/fact_sales_sample_data.png)
+*Figure 6: Sample Data from fact_sales Table - Sales Transactions with Dimension Joins*
