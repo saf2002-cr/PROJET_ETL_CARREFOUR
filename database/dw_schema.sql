@@ -1,32 +1,50 @@
+-- ============================================
+-- Carrefour E-commerce Data Warehouse Schema
+-- ============================================
+-- Purpose: Star Schema design for BI analytics
+-- Author: Safaa Oussalem
+-- Date: 2026-02-22
+-- Version: 1.0
+-- ============================================
+
+-- Create Database
+DROP DATABASE IF EXISTS carrefour_bi;
 CREATE DATABASE carrefour_bi;
 USE carrefour_bi;
---- DIMENSION PRODUIT
-CREATE TABLE IF NOT EXISTS dim_product(
-	 product_sk INT AUTO_INCREMENT PRIMARY KEY,
-    sku VARCHAR(150) NOT NULL,              -- Business Key (ex: oasis_Oasis-064-36)
-    item_id VARCHAR(50),                     -- ID technique du dataset
-    brand VARCHAR(100),                      -- Extrait du SKU : oasis, Fantastic, mdeal...
-    category VARCHAR(100),
-    unit_price DECIMAL(10,2),
+
+-- ============================================
+-- DIMENSION TABLES
+-- ============================================
+
+-- Dimension: Product
+CREATE TABLE IF NOT EXISTS dim_product (
+    product_sk INT AUTO_INCREMENT PRIMARY KEY,
+    sku VARCHAR(150) NOT NULL,              -- Business Key (unique product identifier)
+    item_id VARCHAR(50),                     -- Technical ID from source dataset
+    brand VARCHAR(100),                      -- Extracted from SKU (oasis, Fantastic, mdeal...)
+    category VARCHAR(100),                   -- Product category
+    unit_price DECIMAL(10,2),                -- Unit price in currency
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uk_sku (sku),
     INDEX idx_category (category),
     INDEX idx_brand (brand)
 );
 
---- DIMENSION CLIENTS
+-- Dimension: Customer
 CREATE TABLE IF NOT EXISTS dim_customer (
     customer_sk INT AUTO_INCREMENT PRIMARY KEY,
-    customer_hash VARCHAR(100),              -- Hash anonymisé (âge+ville+genre) car pas d'ID client
-    gender VARCHAR(20),
-    age INT,
-    city VARCHAR(100),
-    region VARCHAR(100),                     -- À déduire de la ville (ex: Cairo → Greater Cairo)
+    customer_hash VARCHAR(100),              -- MD5 hash (gender_age_city) for unique identification
+    gender VARCHAR(20),                      -- Customer gender
+    age INT,                                 -- Customer age
+    city VARCHAR(100),                       -- Customer city
+    region VARCHAR(100),                     -- Region derived from city (e.g., Cairo → Greater Cairo)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_customer_hash (customer_hash),
     INDEX idx_city (city),
     INDEX idx_gender (gender)
 );
---- DIMENSION TEMPS
+
+-- Dimension: Date
 CREATE TABLE IF NOT EXISTS dim_date (
     date_key DATE PRIMARY KEY,
     day INT,
@@ -40,46 +58,57 @@ CREATE TABLE IF NOT EXISTS dim_date (
     is_month_end BOOLEAN
 );
 
---- Dimension Paiement
- CREATE TABLE IF NOT EXISTS dim_payment (
+-- Dimension: Payment Method
+CREATE TABLE IF NOT EXISTS dim_payment (
     payment_sk INT AUTO_INCREMENT PRIMARY KEY,
-    payment_method VARCHAR(50) UNIQUE,       -- cod, credit_card, wallet...
-    description VARCHAR(255)
+    payment_method VARCHAR(50) UNIQUE,       -- Payment method (cod, credit_card, wallet...)
+    description VARCHAR(255)                 -- Payment method description
 );
 
---- Dimension Statut Commande 
+-- Dimension: Order Status
 CREATE TABLE IF NOT EXISTS dim_order_status (
     status_sk INT AUTO_INCREMENT PRIMARY KEY,
-    status_code VARCHAR(50) UNIQUE,          -- received, complete, cancelled...
-    status_group VARCHAR(50),                -- completed, pending, cancelled (pour agrégation)
-    description VARCHAR(255)
+    status_code VARCHAR(50) UNIQUE,          -- Status from source (received, complete, cancelled...)
+    status_group VARCHAR(50),                -- Aggregated status (completed, pending, cancelled)
+    description VARCHAR(255)                 -- Status description
 );
 
---- tablede FAITS
+-- ============================================
+-- FACT TABLE
+-- ============================================
+
+-- Fact: Sales Transactions
 CREATE TABLE IF NOT EXISTS fact_sales (
     sale_sk BIGINT AUTO_INCREMENT PRIMARY KEY,
-    order_id VARCHAR(100) NOT NULL,          -- Business Key
-    product_sk INT,
-    customer_sk INT,
-    date_key DATE,
-    payment_sk INT,
-    status_sk INT,
+    order_id VARCHAR(100) NOT NULL,          -- Business Key from source
+    product_sk INT,                          -- FK to dim_product
+    customer_sk INT,                         -- FK to dim_customer
+    date_key DATE,                           -- FK to dim_date
+    payment_sk INT,                          -- FK to dim_payment
+    status_sk INT,                           -- FK to dim_order_status
     
-    line_total DECIMAL(12,2),      -- métriques à gérer dans pentaho (qty * unit_price)
-    net_sales DECIMAL(12,2),                 --  et (line_total - discount_amount)
+    -- Metrics (calculated in ETL)
+    line_total DECIMAL(12,2),                -- qty_ordered * unit_price
+    net_sales DECIMAL(12,2),                 -- line_total - discount_amount
     
-    cancellation_reason VARCHAR(255), -- metadonnées
+    -- Metadata
+    cancellation_reason VARCHAR(255),        -- Reason for cancellation/refund
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (product_sk) REFERENCES dim_product(product_sk), 
+    -- Foreign Key Constraints
+    FOREIGN KEY (product_sk) REFERENCES dim_product(product_sk),
     FOREIGN KEY (customer_sk) REFERENCES dim_customer(customer_sk),
     FOREIGN KEY (date_key) REFERENCES dim_date(date_key),
     FOREIGN KEY (payment_sk) REFERENCES dim_payment(payment_sk),
     FOREIGN KEY (status_sk) REFERENCES dim_order_status(status_sk),
     
-    -- Index pour performance
+    -- Performance Indexes
     INDEX idx_order (order_id),
     INDEX idx_date (date_key),
     INDEX idx_product (product_sk),
     INDEX idx_customer (customer_sk)
 );
+
+-- ============================================
+-- END OF SCHEMA
+-- ============================================
