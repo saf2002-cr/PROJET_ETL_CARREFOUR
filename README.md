@@ -87,3 +87,37 @@
 
 ![Sample Data](etl/fact_sales_sample_data.png)
 *Figure 6: Sample Data from fact_sales Table - Sales Transactions with Dimension Joins*
+
+## Data Warehouse Schema
+
+### Star Schema Design
+
+| Table | Records | Description |
+|-------|---------|-------------|
+| `dim_product` | Product catalog with categories |
+| `dim_customer` | Customer profiles with MD5 hash |
+| `dim_date` | Date dimension (2020-2021) |
+| `dim_payment`  Payment methods reference |
+| `dim_order_status` | Order status reference |
+| `fact_sales` | Sales transactions with metrics |
+
+**Foreign Keys in fact_sales:**
+- `product_sk` → dim_product
+- `customer_sk` → dim_customer
+- `date_key` → dim_date
+- `payment_sk` → dim_payment
+- `status_sk` → dim_order_status
+
+---
+
+## Key Business Metrics
+
+| Metric | Value |
+|--------|-------|
+| **Total Transactions** | ~21,000 sales |
+| **Date Range** | 2020-2021 |
+| **Unique Products** | ~18,363 SKUs |
+| **Unique Customers** | ~696 customers |
+| **Payment Methods** | 7 methods |
+| **Order Statuses** | 5 statuses |
+
